@@ -1,0 +1,23 @@
+# Checkpoints (too large for git)
+checkpoints/
+code/checkpoints/
+
+# LaTeX auxiliary files
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.blg
+*.bbl
+
+# Python cache
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Temporary files
+*.tmp
+texput.log

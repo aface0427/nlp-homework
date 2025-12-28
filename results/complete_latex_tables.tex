@@ -1,0 +1,235 @@
+% =============================================================================
+% 中英机器翻译实验 - 完整LaTeX表格
+% 可直接复制到LaTeX论文中使用
+% =============================================================================
+
+% ----- 需要的包 -----
+% \usepackage{booktabs}
+% \usepackage{multirow}
+% \usepackage{makecell}
+
+% =============================================================================
+% 表1: 数据集统计
+% =============================================================================
+\begin{table}[h]
+\centering
+\caption{数据集统计}
+\label{tab:dataset}
+\begin{tabular}{lccc}
+\toprule
+数据集 & 样本数 & 平均中文长度 & 平均英文长度 \\
+\midrule
+train\_10k & 10,000 & 25.3 & 28.7 \\
+train\_100k & 100,000 & 24.8 & 27.9 \\
+valid & 500 & 24.5 & 28.1 \\
+test & 200 & 25.1 & 28.4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =============================================================================
+% 表2: 模型超参数对比
+% =============================================================================
+\begin{table}[h]
+\centering
+\caption{模型架构与超参数}
+\label{tab:model-params}
+\begin{tabular}{lccc}
+\toprule
+参数 & RNN & Transformer & T5 \\
+\midrule
+Hidden Size & 512 & 256 & 512 \\
+Layers & 2 & 4 & - \\
+Attention Heads & 1 & 8 & 8 \\
+FFN Size & - & 1024 & 2048 \\
+Dropout & 0.3 & 0.1 & 0.1 \\
+Vocab Size & 10,000 & 10,000 & 32,128 \\
+参数量 & ~15M & ~12M & ~60M \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =============================================================================
+% 表3: RNN消融实验结果
+% =============================================================================
+\begin{table}[h]
+\centering
+\caption{RNN模型消融实验结果 (10k数据)}
+\label{tab:rnn-ablation}
+\begin{tabular}{llccc}
+\toprule
+实验组 & 配置 & Val BLEU & Epochs & 备注 \\
+\midrule
+\multirow{2}{*}{Cell Type} 
+ & GRU (baseline) & 4.56 & 23 & - \\
+ & LSTM & 0.98 & 35 & -78.5\% \\
+\midrule
+\multirow{3}{*}{Attention}
+ & Dot & 1.28 & 27 & - \\
+ & Multiplicative & 0.49 & 29 & - \\
+ & Additive & 4.56 & 23 & \textbf{Best} \\
+\midrule
+\multirow{3}{*}{Teacher Forcing}
+ & TF=0.0 & 1.29 & 13 & - \\
+ & TF=0.5 & 4.56 & 23 & - \\
+ & TF=1.0 & 0.78 & 30 & - \\
+\midrule
+\multirow{2}{*}{Decoding}
+ & Greedy & 4.56 & 23 & - \\
+ & Beam=5 & 3.42 & 7 & - \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =============================================================================
+% 表4: Transformer消融实验结果
+% =============================================================================
+\begin{table}[h]
+\centering
+\caption{Transformer模型消融实验结果 (10k数据)}
+\label{tab:transformer-ablation}
+\begin{tabular}{llccc}
+\toprule
+实验组 & 配置 & Val BLEU & Epochs & 备注 \\
+\midrule
+\multirow{2}{*}{Position Encoding}
+ & Absolute (sine) & 14.78 & 32 & \textbf{Best} \\
+ & Relative (learnable) & 1.52 & 26 & - \\
+\midrule
+\multirow{2}{*}{Normalization}
+ & LayerNorm & 14.78 & 32 & - \\
+ & RMSNorm & 1.53 & 37 & - \\
+\midrule
+\multirow{3}{*}{Model Scale}
+ & Small (2L) & 2.56 & 47 & - \\
+ & Medium (4L) & 14.78 & 32 & \textbf{Best} \\
+ & Large (6L) & 0.98 & 50 & 过拟合 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =============================================================================
+% 表5: 100k数据实验结果
+% =============================================================================
+\begin{table}[h]
+\centering
+\caption{100k数据集实验结果}
+\label{tab:100k-results}
+\begin{tabular}{lcccc}
+\toprule
+模型 & Val BLEU & Test BLEU & Epochs & 提升比 \\
+\midrule
+Transformer Medium & \textbf{15.66} & 11.55 & 26 & 1.06× \\
+Transformer Small & 12.63 & 12.18 & 30 & 4.93× \\
+Transformer Relative & 14.77 & 11.73 & 18 & 9.72× \\
+RNN GRU+Additive & 5.34 & 7.04 & 11 & 1.17× \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =============================================================================
+% 表6: T5实验结果
+% =============================================================================
+\begin{table}[h]
+\centering
+\caption{T5预训练模型微调结果}
+\label{tab:t5-results}
+\begin{tabular}{lccc}
+\toprule
+配置 & 数据集 & Val BLEU & Epochs \\
+\midrule
+T5-small & 10k & 0.29 & 50 \\
+T5-small & 100k & 0.45 & 50 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =============================================================================
+% 表7: 测试集最终评估
+% =============================================================================
+\begin{table}[h]
+\centering
+\caption{测试集最终评估结果}
+\label{tab:test-results}
+\begin{tabular}{lccc}
+\toprule
+模型 & 训练数据 & Val BLEU & Test BLEU \\
+\midrule
+Transformer Medium & 10k & 14.78 & \textbf{14.51} \\
+Transformer Medium & 100k & \textbf{15.66} & 11.55 \\
+Transformer Small & 100k & 12.63 & 12.18 \\
+Transformer Relative & 100k & 14.77 & 11.73 \\
+RNN GRU+Additive & 10k & 4.56 & 7.72 \\
+RNN GRU+Additive & 100k & 5.34 & 7.04 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =============================================================================
+% 表8: 所有实验汇总 (按BLEU排序)
+% =============================================================================
+\begin{table*}[t]
+\centering
+\caption{所有实验结果汇总 (按验证集BLEU降序)}
+\label{tab:all-results}
+\begin{tabular}{clcccc}
+\toprule
+排名 & 实验名称 & 模型类型 & 数据集 & Val BLEU & Epochs \\
+\midrule
+1 & transformer\_medium\_100k & Transformer & 100k & 15.66 & 26 \\
+2 & transformer\_relative\_100k & Transformer & 100k & 14.77 & 18 \\
+3 & transformer\_medium & Transformer & 10k & 14.78 & 32 \\
+4 & transformer\_small\_100k & Transformer & 100k & 12.63 & 30 \\
+5 & rnn\_best\_100k & RNN & 100k & 5.34 & 11 \\
+6 & rnn\_gru\_additive & RNN & 10k & 4.56 & 23 \\
+7 & transformer\_small\_lr5e4 & Transformer & 10k & 4.53 & 26 \\
+8 & transformer\_small\_bs32\_lr2e4 & Transformer & 10k & 4.05 & 30 \\
+9 & rnn\_best\_100k\_beam5 & RNN & 100k & 3.42 & 7 \\
+10 & transformer\_small & Transformer & 10k & 2.56 & 47 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+% =============================================================================
+% 表9: 实验环境
+% =============================================================================
+\begin{table}[h]
+\centering
+\caption{实验环境配置}
+\label{tab:environment}
+\begin{tabular}{ll}
+\toprule
+组件 & 版本/规格 \\
+\midrule
+GPU & NVIDIA RTX 4090 (24GB) \\
+Python & 3.11 \\
+PyTorch & 2.9.0+cu128 \\
+CUDA & 12.8 \\
+操作系统 & Ubuntu 22.04 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =============================================================================
+% 表10: 超参数搜索空间
+% =============================================================================
+\begin{table}[h]
+\centering
+\caption{超参数搜索空间}
+\label{tab:hyperparams}
+\begin{tabular}{lc}
+\toprule
+超参数 & 取值范围 \\
+\midrule
+Batch Size & \{32, 64\} \\
+Learning Rate & \{1e-4, 2e-4, 5e-4\} \\
+Hidden Size & \{256, 512\} \\
+Num Layers & \{2, 4, 6\} \\
+Attention Heads & \{4, 8\} \\
+Dropout & \{0.1, 0.3\} \\
+Teacher Forcing & \{0.0, 0.5, 1.0\} \\
+Early Stopping Patience & 3 \\
+Max Epochs & 50 \\
+\bottomrule
+\end{tabular}
+\end{table}
